@@ -80,9 +80,10 @@ def _load_module(path):
 def _compile_proto(full_path, dest):
     'Helper to compile protobuf files'
     proto_path = os.path.dirname(full_path)
+    working_path = os.path.abspath('.')
     protoc_args = [find_protoc(),
                    '--python_out={}'.format(dest),
-                   '--proto_path={}'.format(proto_path),
+                   '--proto_path={}'.format(working_path),
                    full_path]
     proc = subprocess.Popen(protoc_args, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
@@ -101,7 +102,7 @@ def _compile_proto(full_path, dest):
     return True
 
 
-def from_file(proto_file):
+def from_file(proto_file, dest=None):
     '''
     Take a filename |protoc_file|, compile it via the Protobuf
     compiler, and import the module.
@@ -112,13 +113,20 @@ def from_file(proto_file):
     if not proto_file.endswith('.proto'):
         raise BadProtobuf()
 
-    dest = tempfile.mkdtemp()
+    if not dest:
+        dest = tempfile.mkdtemp()
     full_path = os.path.abspath(proto_file)
+    working_path = os.path.abspath('.')
     _compile_proto(full_path, dest)
 
     filename = os.path.split(full_path)[-1]
     name = re.search(r'^(.*)\.proto$', filename).group(1)
-    target = os.path.join(dest, name+'_pb2.py')
+    
+    target = os.path.join(dest, proto_file[:-6]+'_pb2.py')
+    with open(proto_file) as fpro:
+        for line in fpro.lines():
+            subproto = re.search(r'^import\s*"(.*\.proto)"\s*$', line).group(1)
+            from_file(subproto, dest)
 
     return _load_module(target)
 
