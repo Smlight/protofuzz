@@ -124,7 +124,7 @@ def from_file(proto_file, dest=None):
     
     target = os.path.join(dest, proto_file[:-6]+'_pb2.py')
     with open(proto_file) as fpro:
-        for line in fpro.lines():
+        for line in fpro:
             subproto = re.search(r'^import\s*"(.*\.proto)"\s*$', line).group(1)
             from_file(subproto, dest)
 
