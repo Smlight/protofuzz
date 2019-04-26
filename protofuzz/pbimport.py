@@ -133,7 +133,7 @@ def from_file(proto_file, dest=None):
                 subproto = tmp.group(1)
                 from_file(subproto, dest)
 
-    return _load_module(target)
+    return _load_module(proto_file[:-6]+'_pb2.py')
 
 
 def types_from_module(pb_module):
