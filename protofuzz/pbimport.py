@@ -132,7 +132,8 @@ def from_file(proto_file, dest=None):
             if tmp:
                 subproto = tmp.group(1)
                 from_file(subproto, dest)
-
+    
+    os.chdir(dest)
     return _load_module(proto_file[:-6]+'_pb2.py')
 
 
