@@ -110,6 +110,9 @@ def from_file(proto_file, dest=None):
     Return the module if successfully compiled, otherwise raise either
     a ProtocNotFound or BadProtobuf exception.
     '''
+
+    print(proto_file)
+
     if not proto_file.endswith('.proto'):
         raise BadProtobuf()
 
@@ -125,8 +128,10 @@ def from_file(proto_file, dest=None):
     target = os.path.join(dest, proto_file[:-6]+'_pb2.py')
     with open(proto_file) as fpro:
         for line in fpro:
-            subproto = re.search(r'^import\s*"(.*\.proto)"\s*$', line).group(1)
-            from_file(subproto, dest)
+            tmp = re.search(r'^import\s*"(.*\.proto)"\s*$', line)
+            if tmp:
+                subproto = tmp.group(1)
+                from_file(subproto, dest)
 
     return _load_module(target)
 
