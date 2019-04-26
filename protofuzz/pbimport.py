@@ -118,6 +118,8 @@ def from_file(proto_file, dest=None):
 
     if not dest:
         dest = tempfile.mkdtemp()
+        print(dest)
+    
     full_path = os.path.abspath(proto_file)
     working_path = os.path.abspath('.')
     _compile_proto(full_path, dest)
