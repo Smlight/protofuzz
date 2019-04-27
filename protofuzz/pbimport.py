@@ -116,8 +116,10 @@ def from_file(proto_file, dest=None):
     if not proto_file.endswith('.proto'):
         raise BadProtobuf()
 
+    first = False
     if not dest:
         dest = tempfile.mkdtemp()
+        first = True
         print(dest)
     
     full_path = os.path.abspath(proto_file)
@@ -135,8 +137,9 @@ def from_file(proto_file, dest=None):
                 subproto = tmp.group(1)
                 from_file(subproto, dest)
     
-    os.chdir(dest)
-    return _load_module(proto_file[:-6]+'_pb2.py')
+    if first:
+        os.chdir(dest)
+        return _load_module(proto_file[:-6]+'_pb2.py')
 
 
 def types_from_module(pb_module):
