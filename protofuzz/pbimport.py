@@ -68,6 +68,7 @@ def _load_module(path):
     module = None
     if sys.version_info.minor < 5:
         loader = importlib.machinery.SourceFileLoader(module_name, path)
+        print(os.path.abspath('.'))
         module = loader.load_module()
     else:
         spec = importlib.util.spec_from_file_location(module_name, path)
