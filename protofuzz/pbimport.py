@@ -11,6 +11,7 @@ import subprocess
 import re
 import importlib
 import importlib.util
+import importlib.machinery
 
 __all__ = ['BadProtobuf', 'ProtocNotFound', 'from_string', 'from_file',
            'types_from_module']
@@ -63,12 +64,12 @@ def from_string(proto_str):
 def _load_module(path):
     'Helper to load a Python file at path and return as a module'
 
+    print(os.path.abspath('.'))
     module_name = os.path.splitext(os.path.basename(path))[0]
-
     module = None
+    
     if sys.version_info.minor < 5:
         loader = importlib.machinery.SourceFileLoader(module_name, path)
-        print(os.path.abspath('.'))
         module = loader.load_module()
     else:
         spec = importlib.util.spec_from_file_location(module_name, path)
@@ -111,9 +112,7 @@ def from_file(proto_file, dest=None):
     Return the module if successfully compiled, otherwise raise either
     a ProtocNotFound or BadProtobuf exception.
     '''
-
-    print(proto_file)
-
+    
     if not proto_file.endswith('.proto'):
         raise BadProtobuf()
 
@@ -122,6 +121,8 @@ def from_file(proto_file, dest=None):
         dest = tempfile.mkdtemp()
         first = True
         print(dest)
+
+    print(proto_file)
     
     full_path = os.path.abspath(proto_file)
     working_path = os.path.abspath('.')
