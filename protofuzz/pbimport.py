@@ -64,7 +64,7 @@ def from_string(proto_str):
 def _load_module(path):
     'Helper to load a Python file at path and return as a module'
 
-    print(os.path.abspath('.'))
+    sys.path.insert(0, os.path.abspath('.'))
     module_name = os.path.splitext(os.path.basename(path))[0]
     module = None
     
@@ -112,7 +112,7 @@ def from_file(proto_file, dest=None):
     Return the module if successfully compiled, otherwise raise either
     a ProtocNotFound or BadProtobuf exception.
     '''
-    
+
     if not proto_file.endswith('.proto'):
         raise BadProtobuf()
 
